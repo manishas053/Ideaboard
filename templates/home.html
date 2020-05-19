@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for post in posts.items %}
+         <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}"> <em> {{ post.author.username }} </em></a>
+                <small class="text-muted"><em>{{ post.date_posted.strftime('%d-%m-%Y') }}</em></small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.description }}</p>
+            <div>
+              {% if current_user.is_authenticated %}
+                  {% if current_user.has_liked_post(post) %}
+                     <a href="{{ url_for('like_action', post_id=post.id, action='unlike') }}">Unlike</a>
+                  {% else %}
+                     <a href="{{ url_for('like_action', post_id=post.id, action='like') }}">Like </a>
+                  {% endif %}
+                  {{ post.likes.count() }} likes &nbsp;&nbsp;
+                  {% if current_user.has_disliked_post(post) %}
+                     <a href="{{ url_for('dislike_action', post_id=post.id, action='undislike') }}">Undislike</a>
+                  {% else %}
+                     <a href="{{ url_for('dislike_action', post_id=post.id, action='dislike') }}">Dislike</a>
+                  {% endif %}
+                  {{ post.dislikes.count() }} dislikes
+              {% else %}
+                  <a href="{{ url_for('like_action', post_id=post.id, action='like') }}">Like</a>
+                  {{ post.likes.count() }} likes &nbsp;&nbsp;
+                  <a href="{{ url_for('dislike_action', post_id=post.id, action='dislike') }}">Dislike</a>
+                  {{ post.dislikes.count() }} dislikes
+              {% endif %}
+            </div>
+          </div>
+        </article>
+    {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1,right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if posts.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>   <!--solid blue color-->
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>   <!-- just outline -->
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+                {% if post.author == current_user %}
+                    {% if post.likes.count()==0 and post.dislikes.count()==0 and post.approves.count()==0 and post.rejects.count()==0 %}
+                        <div>
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                        </div>
+                    {% else %}
+                        <div>
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <h2 class="article-title">{{ post.title }}</h2>
+            <p class="article-content"><h6>Description :</h6> {{ post.description }}</p>
+            <p class="article-content"><h6>Effort Required :</h6> {{ post.effort_required }}</p>
+            <p class="article-content"><h6>Business Value :</h6> {{ post.business_value }}</p>
+        </div>
+    </article>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+                        <input class="btn btn-danger" type="submit" value="Delete">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4"><b>Comments</b></legend>
+                {% for comment in comments %}
+                    <div style="border: 0.1px solid ash; margin-bottom:10px;" >
+                        <font color="green">{{ comment.username }}</font>
+                        <small class="text-muted">{{ comment.date_posted.strftime('%d-%m-%Y') }}</small>
+                        <p class="article-content"> {{ comment.comment }}</p>
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <b>{{ form.comment.label(class="form-control-label") }}</b>
+                    {% if form.comment.errors %}
+                    {{ form.comment(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.comment.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.comment(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+
+    <div class="content-section">
+    <div>
+        {% if current_user.is_authenticated %}
+            {% if current_user.username == "manee" or current_user.username == "test_user1"%}
+                <legend class="border-bottom mb-4"><b>Review Panel</b></legend>
+                <div style="padding-right: 8px;">
+                    <a class="btn btn-success" href="{{ url_for('approve_action', post_id=post.id, action='approve') }}">Approve </a>
+                    <a class="btn btn-danger" href="{{ url_for('reject_action', post_id=post.id, action='reject') }}">Reject </a><br/><br/>
+                </div>
+                <div style="border: 0.1px solid ash; margin-bottom:10px;" >
+                        <font color="black"> Approves : {{ post.approves.count() }} </font><br/>
+                        <font color="black"> Rejects : {{ post.rejects.count() }} </font><br/><br/>
+                </div>
+                {% if post.approves.count() > post.rejects.count() %}
+                    <p class="article-content"><font color="green"> <b>APPROVED</b> </p>
+                {% elif post.approves.count() < post.rejects.count() %}
+                    <p class="article-content"><font color="red"> <b>REJECTED</b> </p>
+                {% elif post.approves.count() == post.rejects.count() and post.approves.count() > 0 %}
+                    <p class="article-content"><font color="green"> <b>APPROVED</b> </p>
+                {% endif %}
+                 <br/><br/>
+            {% else %}
+                <legend class="border-bottom mb-4"><b>Review Panel</b></legend>
+                <div style="border: 0.1px solid ash; margin-bottom:10px;" >
+                        <font color="black"> Approves : {{ post.approves.count() }} </font><br/>
+                        <font color="black"> Rejects : {{ post.rejects.count() }} </font><br/>
+                </div>
+                {% if post.approves.count() > post.rejects.count() %}
+                    <p class="article-content"><font color="green"> <b>APPROVED</b> </p>
+                {% elif post.approves.count() < post.rejects.count() %}
+                    <p class="article-content"><font color="red"> <b>REJECTED</b> </p>
+                {% elif post.approves.count() == post.rejects.count() and post.approves.count() > 0 %}
+                    <p class="article-content"><font color="green"> <b>APPROVED</b> </p>
+                {% endif %}
+                 <br/><br/>
+            {%endif%}
+        {% endif %}
+    </div>
+    </div>
+    <!-- <div class="large-8 columns">
+        <form action="/submit_comment" method="post">
+            <input type="text" placeholder="Name" name="who">
+            <textarea placeholder="Enter your message here" name="comments" cols="50" rows="4"></textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div> -->
+    <!-- {% for comment in all_comments %}
+        <div class="row">
+            {% if comment.comment_level == 0 %}
+                <div class="col-lg-12 "></div>
+            {% elif comment.comment_level == 1 %}
+                <div class="col-lg-1 "></div>
+                <div class="col-lg-11"></div>
+            {% elif comment.comment_level == 2 %}
+                <div class="col-lg-2 c"></div>
+                <div class="col-lg-10 "></div>
+            {% elif comment.comment_level == 3 %}
+                <div class="col-lg-3 "></div>
+                <div class="col-lg-9 "></div>
+            {% else %}
+                <div class="col-lg-4 "></div>
+                <div class="col-lg-8 "></div>
+            {% endif %}
+        </div>
+    {% endfor %} -->
+
+
+{% endblock content %}

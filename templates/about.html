@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>About Page</h1><br/>
+    <body>
+        This is the LabHub Idea Dashboard maintained by Network Lab Devops team.
+        This tool helps you to submit your ideas or projects you think that helps in building Intel network better.<br/><br/>
+        In the home page you can see the projects submitted by the team mates. You have the option to Like/Dislike the projects.
+        On double clicking a post, you can see the details of the project and the comments. You can also post your comments.<br/><br/>
+        <img src="{{ home }}"  alt="Image" height="600" width="1000">
+        You can submit your ideas by clicking "Submit Idea" on the right side of the navigation bar (you need to login to perform this action).<br/><br/>
+        <img src="{{ submit_idea }}"  alt="Image" height="42" width="1000">
+        <br/><br/><br/>Once you click on submit idea, you will get a form which requires four fields as follows.<br/><br/>
+        <img src="{{ idea }}"  alt="Image2" height="600" width="1000">
+        <b>"Project Title"</b> : This is the name of your idea which you are submitting<br/><br/>
+        <b>"Project Description"</b> : Give a brief description about your idea<br/><br/>
+        <b>"Effort Required"</b> : The effort/man hours required to finish the task<br/><br/>
+        <b>"Business Value"</b> : The value that brings to the business by accomplishing the task<br/><br/>
+        Once you are done with filling the required fields, you are ready to submit your idea. <br/><br/><br/>
+        After submitting you will be able to see your project in the homepage.<br/><br/>
+        <img src="{{ submitted_idea }}"  alt="Image" height="300" width="1000">
+        <br/><br/>You can update/delete your post once it is created. For doing this double click on your post, you can see the options for this.<br/>
+        <img src="{{ update }}"  alt="Image" height="800" width="1000">
+        <br/><br/>NOTE : You will not be able to delete your post, once review panel has started reviewing. <br/><br/>
+        The review panel will review your ideas and give their feedback through comments. You can also see the count of approves/rejects for your idea.
+        Once you project is approved you are ready to go !<br/><br/><br/>
+    </body>
+{% endblock content %}
+
